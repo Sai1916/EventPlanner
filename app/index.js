@@ -1,50 +1,51 @@
-import { Redirect } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { account, client } from "../appwrite";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { UserContext, UserProvider } from "../store/store";
+import Loading from "./Loading";
 
 export default function Page() {
+  // const { user, setUser, logout } = useContext(UserContext);
+
+  const [userData, setUserData] = useState({});
+
+  const [loading,setLoading] = useState(false);
+
+  const router = useRouter();
+
+  const userAccount = account.get();
   
-  // const user = client.getAccount();
-  const [user,setUser] = useState(null);
-
-    // client.getAccount().then((result) => {
-    //   console.log("result: " + result);
-    //   user = result;
-    // }).catch((error) => {
-    //   console.log("error: " + error);
-    // });
-
-    // console.log("user: " + client.getAccount());  
-
-    useEffect(() => {
-
-      const userAccount = account.get();
-
-      if(userAccount){
-        setUser(userAccount);
-      }
-      else{
-        setUser(null); 
-        account.deleteSessions();
-      }
-    },[]);
-
-    console.log("user: " + user!=null ? user : '');
+  useEffect(() => {
+    try {
+      userAccount
+        .then((result) => {
+          setLoading(true)
+          // console.log("result: " + result);
+          setUserData(result);
+          setLoading(false);
+        })
+        .catch((error) => {
+          // console.log("error1: " + error);
+          setLoading(true);
+          setUserData({});
+          setLoading(false);
+          router.replace('/login') 
+        });
+    } catch (error) {
+      console.log("error123: " + error);
+      setUserData({});
+    }
+    console.log("userData: " + userData ? userData : "null");
+  },[loading,userAccount]);  
+  
 
   return (
-    <>   
-    {user ?        
-      <View style={styles.container}>   
-        <View style={styles.main}>
-          <Text style={styles.title}>Hello World</Text>
-          <Text style={styles.subtitle}>This is the first page of your app.</Text>
-          <Redirect href={"/home"} />
-        </View>
-      </View> :
-      <Redirect href={"/login"} />   
-    }
+    <>
+      { !loading ? <Loading /> : ( 
+        userData ? <Redirect href={"/home"} /> : <Redirect href={"/login"} /> 
+      )}
       <StatusBar style="auto" />
     </>
   );

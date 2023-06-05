@@ -1,10 +1,11 @@
 import { Alert, Button, Dimensions, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { account, client } from '../../appwrite';
 import {bgImage} from '../../assets/event-bgImage1.webp';
+import { UserContext } from '../../store/store';
 
 
 const height = Dimensions.get('screen').height;
@@ -14,8 +15,29 @@ const login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const onSubmitLogin = () => {
-        if(!email){
+    const router = useRouter();
+
+    const {setUser} = useContext(UserContext);
+  
+    // const onSubmitLogin = () => {
+    //     if(!email){
+    //         return Alert.alert("Please enter an email");
+    //     }
+    //     if(!password){
+    //         return Alert.alert("Please enter a password");
+    //     }
+    //     console.log("email: " + email);
+    //     console.log("password: " + password);
+    //     account.createEmailSession(email, password);
+    //     // router.push('/home'); 
+    //     // Alert.alert("Login Successful");
+    // }
+
+    // console.log("user in login:- ",user)
+
+    const onLogin = async () => {
+
+        if(!email){ 
             return Alert.alert("Please enter an email");
         }
         if(!password){
@@ -23,8 +45,19 @@ const login = () => {
         }
         console.log("email: " + email);
         console.log("password: " + password);
-        account.createEmailSession(email, password);
-        Alert.alert("Login Successful");
+
+       return await account.createEmailSession(email, password)
+        .then((result) => {  
+            const userAccount = account.get();
+            userAccount.then(() => {  
+                router.replace('/home');
+            }).catch((error) => {console.log("error: " + error);});     
+        }).catch((error) => { 
+            console.log("error: " + error);   
+            setUser(null);
+            // account.deleteSession('current');  
+            Alert.alert("Logged Out");
+        });  
     }
 
   return (
@@ -36,14 +69,14 @@ const login = () => {
       <TextInput placeholder='Email' value={email} onChangeText={e => setEmail(e)} style={styles.textInput} placeholderTextColor={'black'} cursorColor={'black'}/>
       <TextInput placeholder='Password' value={password} onChangeText={e => setPassword(e)} style={styles.textInput} placeholderTextColor={'black'} cursorColor={'black'}/>
       {/* <Button title='Login' onPress={onSubmitLogin} style={styles.btn}/> */}
-      <TouchableOpacity style={styles.btn} activeOpacity={0.7} onPress={onSubmitLogin}>
+      <TouchableOpacity style={styles.btn} activeOpacity={0.7} onPress={onLogin}>   
         <Text style={styles.btnText}>Login</Text>
       </TouchableOpacity>
-      <View style={styles.bottomContainer}>
+      <View style={styles.bottomContainer}>  
         <Text>Forgot Password?</Text>
         <Link href={'/signUp'}>
             <Text style={styles.signup}>Sign Up</Text>
-        </Link>
+        </Link> 
       </View>
 
     </ImageBackground>

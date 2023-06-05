@@ -21,7 +21,7 @@ const home = () => {
   const router = useRouter();
 
 
-  console.log("width: " + width);
+  // console.log("width: " + width);
 
   const events = [
     {

@@ -2,8 +2,6 @@ import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import React, { useLayoutEffect } from 'react'
 import { useNavigation, useLocalSearchParams } from 'expo-router';
 import {Feather,FontAwesome5} from 'react-native-vector-icons'
-import { onRegister } from './(tabs)/myEvents';
-
 
 const width = Dimensions.get('screen').width;
 

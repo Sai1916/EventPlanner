@@ -1,26 +1,48 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { account } from '../../appwrite';
-import { Redirect } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
+import { UserContext } from '../../store/store';
 
 const profile = () => {
   
-  const logout = async () => {
-    
-    const sessions = account.listSessions();
-    console.log("session list:- ",sessions);  
-    await account.deleteSession('current');
-    // await account.deleteSessions(); 
-    // <Redirect href={"/login"} />
-  }
+  // const {setUser} = useContext(UserContext);
 
+  const router = useRouter();
+
+
+  const [user,setUser] = useState({});
+
+  // useEffect(() => {
+  //     try{
+  //         const userAccount = account.get();
+  //         // console.log("userAccount: " + userAccount);
+  //         userAccount.then((result) => {
+  //           console.log("result profile: " + result.email);
+  //           setUser(result);
+  //         }).catch((err) => {console.log("error: " + err);
+  //           // setUser(null);
+  //           router.replace('/login');
+  //       });
+  //     }
+  //     catch(error){
+  //         console.log("error: " + error);
+  //     }
+  // },[])
+
+  const Logout = async () => { 
+    return await account.deleteSession('current');
+  }
+ 
   return (
     <View>
       <Text>profile</Text>
       <Text>profile</Text>
-      <Text>profile</Text>
-      <Text>profile</Text>
-      <TouchableOpacity onPress={logout}><Text>Logout</Text></TouchableOpacity>
+      <Text>profile</Text> 
+      <Text>profile</Text>  
+      {/* <Text>{user ? user.email : 'Logged OUt' }</Text>   */}
+
+      <TouchableOpacity onPress={Logout}><Text>Logout</Text></TouchableOpacity>
     </View>
   )
 }

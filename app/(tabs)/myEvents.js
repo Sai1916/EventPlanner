@@ -4,30 +4,11 @@ import { Agenda, Calendar } from 'react-native-calendars'
 import { account, databases } from '../../appwrite';
 
 
-
-// let events = [
-// //   {
-// //   id: 1,
-// //   title: "Dance Party",
-// //   description: "This is event 1",
-// // }
-// ];
-
-// const 
-
-
-
-// export const onRegister = (item) => {
-//   console.log("item: " + item.title);
-//   // setEvents([...events, item]);
-//   events = [...events, item];
-// }
-
 const myEvents = () => {
   
   const [events, setEvents] = useState([]);
 
-  useEffect( () => {
+  useEffect(() => {
 
     async function data(){
       
@@ -38,16 +19,14 @@ const myEvents = () => {
         '647639f9c81c54babcbc'
       );        
         console.log("data from db:- ",eventsData.documents);  
-        console.log("data from db:- ",account.deleteSessions());  
+        // console.log("data from db:- ",account.deleteSessions());  
 
         // events = eventsData.documents;
         setEvents(eventsData.documents);
       }
-      
+       
       data()
-  }
-
-  ,[])
+  },[])
 
 
 
