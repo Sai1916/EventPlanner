@@ -8,10 +8,11 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { EvilIcons } from "react-native-vector-icons";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
+import { useLocalSearchParams } from "expo-router";
 
 const width = Dimensions.get('screen').width;
 
@@ -19,7 +20,6 @@ const home = () => {
   const navigation = useNavigation();
 
   const router = useRouter();
-
 
   // console.log("width: " + width);
 
@@ -70,11 +70,6 @@ const home = () => {
     },
   ];
 
-  const [visible, setVisible] = useState(false);
-
-  const onTouchStart = () => {
-    setVisible(true);
-  };
 
   return (
     <ScrollView
@@ -83,11 +78,17 @@ const home = () => {
       contentContainerStyle={{
         paddingVertical: 10,
         backgroundColor: "#ffffff",
-        // height: "100%",
       }}
     >
+      {/* { modal ? (
+          <View style={styles.overlay}>
+            <Text style={styles.overlayText}>{params?.message}</Text>
+            <Text onPress={() => setModal(!modal)}>Close</Text>
+          </View>
+      ) : <></>} */}
+
       <View style={styles.ViewContainer}>
-        <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.btn} activeOpacity={0.8} onPress={() => router.push('/home/createEvent')}>
           <Text style={styles.btnText}>Create an Event</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
@@ -183,6 +184,16 @@ const home = () => {
 export default home;
 
 const styles = StyleSheet.create({
+  overlay:{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    flex:1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 100,
+  },
   btn: {
     backgroundColor: "#ffffff",
     alignItems: "center",

@@ -1,14 +1,16 @@
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import {loadingImage} from '../assets/loading.png'
+import loadingImage from '../assets/loading.png'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
+const width = Dimensions.get("screen").width;
+
 
 const Loading = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <ImageBackground source={loadingImage} style={styles.loading}>
-        <Text>Loading</Text>  
-      </ImageBackground>
+      <Image source={loadingImage} style={styles.loading} />
+      <Text style={styles.text}>Loading....</Text>
     </SafeAreaView>
   )
 }  
@@ -19,13 +21,17 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
         flexDirection: 'column',
-        // backgroundColor: 'skyblue',
+        backgroundColor: '#ffffff',
         alignItems: 'center',
+        justifyContent: 'center',
     },
     loading:{
-      width: 300,
+      width: width,
       height: '80%',
-      resizeMode: 'cover',
+      resizeMode: 'contain',
+    },
+    text: {
+      fontSize: 20,
+      fontWeight: 400
     }
-
 })

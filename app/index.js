@@ -5,6 +5,7 @@ import { account, client } from "../appwrite";
 import { useContext, useEffect, useState } from "react";
 import { UserContext, UserProvider } from "../store/store";
 import Loading from "./Loading";
+import { PaperProvider } from "react-native-paper";
 
 export default function Page() {
   // const { user, setUser, logout } = useContext(UserContext);
@@ -41,13 +42,13 @@ export default function Page() {
   },[loading,userAccount]);  
   
 
-  return (
-    <>
+  return ( 
+    <PaperProvider>
       { !loading ? <Loading /> : ( 
         userData ? <Redirect href={"/home"} /> : <Redirect href={"/login"} /> 
       )}
       <StatusBar style="auto" />
-    </>
+    </PaperProvider>
   );
 }
 

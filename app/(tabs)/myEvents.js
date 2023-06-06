@@ -74,7 +74,7 @@ const myEvents = () => {
       {events.map((event,index) => (
         <View key={index}>
           {/* <Text>{event.date}</Text> */}
-          <Text>{event.title}</Text>
+          <Text>{event.event_name}</Text>
         </View>
       ))}
     </View>

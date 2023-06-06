@@ -5,6 +5,19 @@
       "bundler": "metro"
     },
     "name": "EventPlanner",
-    "slug": "EventPlanner"
+    "slug": "EventPlanner",
+    "extra": {
+      "eas": {
+        "projectId": "7fd65ce9-3969-4973-88fe-5e0a3574f8fb"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7fd65ce9-3969-4973-88fe-5e0a3574f8fb"
+    },
+    "android": {},
+    "ios": {}
   }
 }

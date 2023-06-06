@@ -7,28 +7,9 @@ import {
 } from "react-native-vector-icons";
 import { account } from "../../appwrite";
 
-export default () => {
-  const [user, setUser] = useState({});
+export default () => {  
   
   const router = useRouter();
-
-  useEffect(() => {
-    try {
-      const userAccount = account.get();
-      userAccount 
-        .then((result) => {
-        //   console.log("result1: " + result);
-          setUser(result);
-        })
-        .catch((error) => {
-          setUser({});
-          router.replace("/login");
-        });
-    } catch (error) {
-      console.log("error123: " + error);
-      setUser({});
-    }
-  },[user]);
 
   return (
       <Tabs
@@ -57,11 +38,7 @@ export default () => {
                 size={26}
               />
             ),
-            headerShadowVisible: true,
-            // headerStyle: {backgroundColor: '#51bfb9'},
-            headerStyle: { backgroundColor: "#0d9a60" },
-            headerTitle: "Home",
-            headerTitleStyle: { color: "#fff" },
+            headerShown: false
           }}
         />
         <Tabs.Screen
@@ -80,7 +57,7 @@ export default () => {
         />
         <Tabs.Screen
           name="profile"
-          options={{
+          options={{ 
             headerShown: false,
             tabBarIcon: ({ focused }) => (
               <FontAwesome5
