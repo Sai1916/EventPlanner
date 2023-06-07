@@ -120,7 +120,7 @@ const signUp = () => {
             <Text style={styles.signup}>Login</Text>
           </Link>
         </View>
-      </BlurView>
+        </BlurView>
     </ImageBackground>
   );
 };

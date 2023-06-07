@@ -2,11 +2,20 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Agenda, Calendar } from 'react-native-calendars'
 import { account, databases } from '../../appwrite';
+import { Query } from 'appwrite';
 
 
 const myEvents = () => {
   
-  const [events, setEvents] = useState([]);
+  const [eventsByMe, setEventsByMe] = useState([]);
+
+  const [currentUser,setCurrentUser] = useState({})
+
+  const user = account.get();
+
+  user.then((result) => {
+    setCurrentUser(result);
+  }).catch((error) => {console.log("error: " + error)});
 
   useEffect(() => {
 
@@ -16,18 +25,23 @@ const myEvents = () => {
         // process.env.APPWRITE_DATABASE_ID,  
         '647639e8382636fce548',
         // process.env.APPWRITE_COLLECTION_ID,
-        '647639f9c81c54babcbc'
+        '647639f9c81c54babcbc',
+        // process.enc.APPWRITE_STORAGE_BUCKET_ID,
+        // '64803265c286edb75d02', 
+        [
+          Query.equal("organizer_email", currentUser.email ),   
+          // Query.orderAsc("capacity"), 
+        ]
       );        
-        console.log("data from db:- ",eventsData.documents);  
-        // console.log("data from db:- ",account.deleteSessions());  
-
-        // events = eventsData.documents;
-        setEvents(eventsData.documents);
-      }
-       
-      data()
-  },[])
-
+      
+      // events = eventsData.documents;
+      setEventsByMe(eventsData.documents);
+    }
+    
+    data()
+  },[eventsByMe]);
+  
+  console.log("data from db:- ",eventsByMe);  
 
 
   // const [events, setEvents] = useState([]);
@@ -71,7 +85,7 @@ const myEvents = () => {
         hideKnob={false}
       /> */}
 
-      {events.map((event,index) => (
+      {eventsByMe.map((event,index) => (
         <View key={index}>
           {/* <Text>{event.date}</Text> */}
           <Text>{event.event_name}</Text>

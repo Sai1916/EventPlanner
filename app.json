@@ -3,7 +3,7 @@
     "scheme": "acme",
     "web": {
       "bundler": "metro"
-    },
+    }, 
     "name": "EventPlanner",
     "slug": "EventPlanner",
     "extra": {

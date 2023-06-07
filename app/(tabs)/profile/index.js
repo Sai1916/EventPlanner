@@ -9,47 +9,48 @@ import {
 import React, { useEffect, useState } from "react";
 import { account, avatars } from "../../../appwrite";
 import { useRouter } from "expo-router";
-import { TextInput } from "react-native-paper";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 
 
 const profile = () => {
-  // const {setUser} = useContext(UserContext);
 
   const router = useRouter();
 
   const [user, setUser] = useState({});
   const [image, setImage] = useState(null);
 
-  const [updateEmail, setUpdateEmail] = useState(user?.email);
-
   useEffect(() => {
-    const getUser = async () => {
+    const getUser = async () => {  
       const user = await account.get();
-      setUser(user);
+      try{
+       setUser(user);
+      }catch(error) {
+        console.log("error in profile catch: " + error);
+        router.replace('/login');
+      }
     };
     getUser();
-  }, []);
+  },[]);
 
   useEffect(() => {
-    if (user) {
+    if (user!=null) {
       const getImage = () => {
-        const image = avatars.getInitials(user.name);
+        const image = avatars.getInitials(user.name,100,100);  
         setImage(image);
       };
-      getImage();
-    }
-  }, []);
+      getImage(); 
+    } 
+  },[user]); 
 
-  // console.log("user in profile: ",user);
-  // console.log("image: ",image?.href);
-
-  const Logout = async () => {
-    return await account.deleteSession("current");
-  };  
-
+  const Logout = async () => {  
+    return await account.deleteSession('current').then((result) => {
+      router.replace('/login');
+    }).catch((error) => {
+      console.log("error in logout: " + error); 
+    })
+  }
   const onEditPress = () => {
     // router.push("/profile/editProfile");
   }
@@ -65,16 +66,7 @@ const profile = () => {
           <Text style={styles.userName}>{user.name}</Text>
           <Text style={styles.textDisabled}> {user.email} </Text>
           <Text style={styles.textDisabled}> {user.phone ? user.phone : 'Phome Number not updated'} </Text>
-
-          {/* <TextInput
-            label={updateEmail}
-            value={updateEmail}
-            onChangeText={(text) => setUpdateEmail(text)}
-            style={styles.textDisabled}
-            disabled
-            mode="outlined"
-          /> */}
-        </> 
+        </>   
       )}
       <TouchableOpacity style={styles.btn} activeOpacity={0.7} onPress={Logout}>
         <Text style={styles.btnText}>Logout</Text>
@@ -101,7 +93,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     position: "absolute",
     bottom: 30,
-  },
+  }, 
   editBtn: {
     alignItems: "center",
     backgroundColor: "#000000",

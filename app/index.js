@@ -23,7 +23,6 @@ export default function Page() {
       userAccount
         .then((result) => {
           setLoading(true)
-          // console.log("result: " + result);
           setUserData(result);
           setLoading(false);
         })
@@ -34,18 +33,18 @@ export default function Page() {
           setLoading(false);
           router.replace('/login') 
         });
-    } catch (error) {
+    } catch (error) { 
       console.log("error123: " + error);
       setUserData({});
     }
-    console.log("userData: " + userData ? userData : "null");
-  },[loading,userAccount]);  
+    // console.log("userData: " + userData!=null ? userData : "null");  
+  },[loading,userAccount]);      
   
 
-  return ( 
+  return (  
     <PaperProvider>
-      { !loading ? <Loading /> : ( 
-        userData ? <Redirect href={"/home"} /> : <Redirect href={"/login"} /> 
+      { !loading ? <Loading /> : (  
+        userData!=null ? <Redirect href={"/home"} /> : <Redirect href={"/login"} /> 
       )}
       <StatusBar style="auto" />
     </PaperProvider>

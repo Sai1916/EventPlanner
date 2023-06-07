@@ -15,7 +15,6 @@ import { Link, useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { account, client } from "../../appwrite";
 import bgImage from "../../assets/event-bgImage1.webp";
-import { UserContext } from "../../store/store";
 import { BlurView } from "expo-blur";
 
 const height = Dimensions.get("screen").height;
@@ -46,11 +45,11 @@ const login = () => {
             router.replace("/home");
           })
           .catch((error) => {
-            console.log("error: " + error);
+            console.log("error 1st catch: " + error);
           });
       })
       .catch((error) => {
-        console.log("error: " + error);
+        console.log("error outer login catch: " + error);
         // setUser(null);
         // account.deleteSession('current');
         Alert.alert("Logged Out");
@@ -95,8 +94,8 @@ const login = () => {
             <Text style={styles.signup}>Sign Up</Text>
           </Link>
         </View>
-      {/* </LinearGradient> */}
-      </BlurView>
+      {/* </LinearGradient> */}  
+      </BlurView> 
     </ImageBackground>
   );
 };
