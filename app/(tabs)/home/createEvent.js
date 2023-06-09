@@ -1,8 +1,8 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button, TextInput } from "react-native-paper";
 import { TouchableOpacity } from "react-native";
-import { ID, databases } from "../../../appwrite";
+import { ID, databases, storage } from "../../../appwrite";
 import { useRouter } from "expo-router"; 
 import { Octicons } from "react-native-vector-icons";
 import * as ImagePicker from 'expo-image-picker';
@@ -66,6 +66,9 @@ const createEvent = () => {
             setName("");
             setEmail("");
             setCapacity("");
+            setImage(null);
+            const  uploadFile = storage.createFile('64803265c286edb75d02', result.$id, new File(image,image.split('/')[-1]));  
+            console.log("uploadFile: ", uploadFile);
             // router.replace({pathname: '/home',params : { 
             //     modal: true,  
             //     message: `${result.event_name} Event Created Successfully`,
@@ -84,6 +87,7 @@ const createEvent = () => {
     // console.log("permissions: ", permissions); 
 
     const [image, setImage] = useState(null);
+    const [imageResult,setImageResult] = useState(null)
 
     const pickImage = async () => {
       // No permissions request is necessary for launching the image library
@@ -98,6 +102,7 @@ const createEvent = () => {
 
       if (!result.canceled) {
         setImage(result.assets[0].uri);
+        setImageResult(result);
       }
     };
 
@@ -141,7 +146,7 @@ const createEvent = () => {
         style={styles.inputBox}
       />
 
-
+      {image && <Image source={{ uri: image }} style={{ width: "96%", height: 200, resizeMode: 'contain', borderRadius: 10 }} />}
       <Button icon="image" mode="elevated" onPress={pickImage}>
         Upload
       </Button>

@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Agenda, Calendar } from 'react-native-calendars'
-import { account, databases } from '../../appwrite';
+import { account, databases, storage } from '../../appwrite';
 import { Query } from 'appwrite';
 
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
 
 const myEvents = () => {
   
@@ -33,18 +35,34 @@ const myEvents = () => {
           // Query.orderAsc("capacity"), 
         ]
       );        
+
       
-      // events = eventsData.documents;
+      // eventsData.documents.map((event) => {
+        
+      //   const getEventFile = storage.getFile('64803265c286edb75d02',event.$id);
+        
+      //   getEventFile.then(function (response) {
+      //     console.log("resp: ",response); // Success
+      //   }, function (error) {
+      //     console.log(error); // Failure
+      //   });
+      // })
+      
       setEventsByMe(eventsData.documents);
     }
     
     data()
   },[eventsByMe]);
+
+
+  const getEventImage = (id) => {
+    const getEventFile = storage.getFilePreview('64803265c286edb75d02',id);
+    const finalImage =  ""+getEventFile;
+    // console.log("finalImage:---",finalImage);
+    return finalImage;
+  }
   
-  console.log("data from db:- ",eventsByMe);  
-
-
-  // const [events, setEvents] = useState([]);
+  // console.log("data from db:- ",eventsByMe);  
   
   const [selected, setSelected] = useState('');
   const dates = [
@@ -84,13 +102,59 @@ const myEvents = () => {
         renderItem={(item, index) => {return (<View key={index}><Text>{item.name}</Text></View>)}}
         hideKnob={false}
       /> */}
-
+      <Text>Events Posted By Me</Text>
       {eventsByMe.map((event,index) => (
         <View key={index}>
-          {/* <Text>{event.date}</Text> */}
-          <Text>{event.event_name}</Text>
+          <TouchableOpacity
+              key={index}
+              // onPress={() => router.push({ pathname: '/eventDetail', params: {id: item.id, data: item} })}
+              onPress={() => {
+                // router.push({
+                //   pathname: "/eventDetail",
+                //   params: { id: item.id, title: item.title, item },
+                // });
+                // navigation.navigate("eventDetail", {
+                //   data: item,
+                // });
+              }}
+              style={{
+                width: width > 370 ? "30%" : 'auto',
+                height: width > 370 ? 280 : 'auto',
+                alignItems: "center",
+                justifyContent: "center",
+                marginVertical: 10,
+                marginHorizontal: 14,
+                // padding: 10,
+                backgroundColor: "#ffffff",
+                borderRadius: 10,
+                shadowColor: "#000000",
+                shadowOffset: {
+                  width: 8,
+                  height: 18,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 16,
+                elevation: 10,
+              }}
+            >
+              <Image source={{ uri: getEventImage(event.$id) }} style={styles.image} />
+              <View style={styles.innerView}>
+                <Text
+                  style={{ fontSize: 16, fontWeight: "400", color: "#000000" }}
+                >
+                  {event.event_name}
+                </Text>
+                {/* <Text style={{ fontSize: 12, fontWeight: "400", color: "#000000" }}>
+                {new Date(event.event_date).toLocaleString()}
+                {new Date(event.event_date).toString()}
+              </Text>      */}
+              </View> 
+            </TouchableOpacity>
         </View>
       ))}
+
+      <Text>Events I registerd for</Text>
+
     </View>
   )
 }
@@ -101,5 +165,25 @@ const styles = StyleSheet.create({
   container:{
     flex:1,
     // paddingVertical: 10,
-  }
+  },
+  image: {
+    width: "100%",
+    height: width > 370 ? 250 : 200,
+    resizeMode: width > 370 ? "cover" : "contain",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  innerView: {
+    // position: "absolute",
+    // bottom: 6,
+    // right: 14,
+    // backgroundColor: "#a5c6ff",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    // borderRadius: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "space-between",
+  },
 })

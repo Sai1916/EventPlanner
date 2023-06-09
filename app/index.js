@@ -30,11 +30,11 @@ export default function Page() {
           // console.log("error1: " + error);
           setLoading(true);
           setUserData({});
-          setLoading(false);
+          setLoading(false); 
           router.replace('/login') 
         });
     } catch (error) { 
-      console.log("error123: " + error);
+      console.log("error123: " + error);  
       setUserData({});
     }
     // console.log("userData: " + userData!=null ? userData : "null");  

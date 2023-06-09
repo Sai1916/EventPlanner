@@ -25,8 +25,7 @@ export default () => {
           // tabBarLabelPosition: 'below-icon',
           tabBarShowLabel: false,
           // tabBarStyle: {backgroundColor: '#e09ad3'},
-        }}
-        initialRouteName="home"
+        }} 
       >
         <Tabs.Screen
           name="home"
