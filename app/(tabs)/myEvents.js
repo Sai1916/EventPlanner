@@ -1,4 +1,4 @@
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native'
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Agenda, Calendar } from 'react-native-calendars'
 import { account, databases, storage } from '../../appwrite';
@@ -79,7 +79,7 @@ const myEvents = () => {
   // console.log("events: " + events);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {/* <Calendar 
         onDayPress={(day) => {console.log('selected day', day);
         setSelected(day.dateString)}}
@@ -104,7 +104,7 @@ const myEvents = () => {
       /> */}
       <Text>Events Posted By Me</Text>
       {eventsByMe.map((event,index) => (
-        <View key={index}>
+        <View key={index}>  
           <TouchableOpacity
               key={index}
               // onPress={() => router.push({ pathname: '/eventDetail', params: {id: item.id, data: item} })}
@@ -137,17 +137,17 @@ const myEvents = () => {
                 elevation: 10,
               }}
             >
-              <Image source={{ uri: getEventImage(event.$id) }} style={styles.image} />
+              {/* <Image source={{ uri: getEventImage(event.$id) }} style={styles.image} /> */}
               <View style={styles.innerView}>
                 <Text
                   style={{ fontSize: 16, fontWeight: "400", color: "#000000" }}
                 >
                   {event.event_name}
                 </Text>
-                {/* <Text style={{ fontSize: 12, fontWeight: "400", color: "#000000" }}>
-                {new Date(event.event_date).toLocaleString()}
-                {new Date(event.event_date).toString()}
-              </Text>      */}
+                <Text style={{ fontSize: 12, fontWeight: "400", color: "#000000" }}>
+                {new Date(event.dateTime).toUTCString()}
+                {/* {new Date(event.event_date).toString()} */}
+              </Text>     
               </View> 
             </TouchableOpacity>
         </View>
@@ -155,7 +155,7 @@ const myEvents = () => {
 
       <Text>Events I registerd for</Text>
 
-    </View>
+    </ScrollView>
   )
 }
 

@@ -8,11 +8,13 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { EvilIcons } from "react-native-vector-icons";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
+import { Query } from "appwrite";
+import { account, databases } from "../../../appwrite";
 
 const width = Dimensions.get('screen').width;
 
@@ -71,6 +73,40 @@ const home = () => {
   ];
 
 
+  const [eventsData,setEventsData] = useState([]);
+
+  const [currentUser,setCurrentUser] = useState({})
+
+  const user = account.get();
+
+  user.then((result) => {
+    setCurrentUser(result);
+  }).catch((error) => {console.log("error: " + error)});
+
+  useEffect(() => {
+      
+      async function data(){
+        
+        const eventsData = await databases.listDocuments(
+          // process.env.APPWRITE_DATABASE_ID,  
+          '647639e8382636fce548',
+          // process.env.APPWRITE_COLLECTION_ID,
+          '647639f9c81c54babcbc',
+          // process.enc.APPWRITE_STORAGE_BUCKET_ID,
+          // '64803265c286edb75d02', 
+          [
+             Query.notEqual("organizer_email", currentUser.email ),   
+            // Query.orderAsc("capacity"), 
+          ]
+        );        
+  
+        setEventsData(eventsData.documents);
+      }
+      
+      data()
+  },[eventsData])
+
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -78,6 +114,7 @@ const home = () => {
       contentContainerStyle={{
         paddingVertical: 10,
         backgroundColor: "#ffffff",
+        flex:1
       }}
     >
       {/* { modal ? (
@@ -115,7 +152,7 @@ const home = () => {
           Events
         </Text>
         <View style={width > 370 ? styles.itemsContainer : styles.mobileItemsContainer}>
-          {events.map((item, index) => (
+          { eventsData.length > 0 ? (eventsData.map((item, index) => (
             <TouchableOpacity
               key={index}
               // onPress={() => router.push({ pathname: '/eventDetail', params: {id: item.id, data: item} })}
@@ -148,17 +185,17 @@ const home = () => {
                 elevation: 10,
               }}
             >
-              <Image source={{ uri: item.image }} style={styles.image} />
+              {/* <Image source={{ uri: item.image }} style={styles.image} /> */}
               <View style={styles.innerView}>
                 <Text
                   style={{ fontSize: 16, fontWeight: "400", color: "#000000" }}
                 >
-                  {item.title}
+                  {item.event_name}
                 </Text>
-                {/* <Text style={{ fontSize: 12, fontWeight: "400", color: "#000000" }}>
-                {item.date}
-              </Text>      */}
-                <View style={{ flexDirection: "row", alignItems: "center" }}> 
+                <Text style={{ fontSize: 12, fontWeight: "400", color: "#000000" }}>
+                {new Date(item.dateTime).toUTCString()}
+              </Text>     
+                {/* <View style={{ flexDirection: "row", alignItems: "center" }}> 
                   <EvilIcons name="location" size={20} color="black" />
                   <Text
                     style={{
@@ -171,10 +208,12 @@ const home = () => {
                   >
                     {item.location}
                   </Text>
-                </View>
+                </View> */}
               </View>
             </TouchableOpacity>
-          ))}
+          ))) : <View>
+          <Text>No Events Found</Text>
+          </View>}
         </View>
       </View>
     </ScrollView>
