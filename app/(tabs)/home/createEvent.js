@@ -167,6 +167,7 @@ const createEvent = () => {
       DateTimePickerAndroid.open({
         mode: type === "date" ? 'date' : 'time',        
         value: new Date(),
+        timeZoneOffsetInMinutes : 330,
         is24Hour: true,  
         onChange: (e,date) => {
           console.log("e: ", e);

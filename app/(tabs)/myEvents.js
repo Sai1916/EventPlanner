@@ -10,16 +10,18 @@ const height = Dimensions.get('screen').height;
 const myEvents = () => {
   
   const [eventsByMe, setEventsByMe] = useState([]);
+  const [eventsRegisteredByMe, setEventsRegisteredByMe] = useState([]);
 
   const [currentUser,setCurrentUser] = useState({})
 
   const user = account.get();
 
-  user.then((result) => {
-    setCurrentUser(result);
-  }).catch((error) => {console.log("error: " + error)});
-
+  
   useEffect(() => {
+
+    user.then((result) => {
+      setCurrentUser(result);
+    }).catch((error) => {console.log("error: " + error)});
 
     async function data(){
       
@@ -35,6 +37,24 @@ const myEvents = () => {
           // Query.orderAsc("capacity"), 
         ]
       );        
+
+
+      const totalDocuments = await databases.listDocuments(
+        '647639e8382636fce548',
+        '647639f9c81c54babcbc',
+      )
+
+      let eventsRegistered  = [];
+
+      totalDocuments.documents.map((event) => {
+        if(event.attendees.includes(currentUser.email)){
+          eventsRegistered.push(event);
+        }
+      })
+      
+      console.log("eventsRegisteredByMe: ",eventsRegistered);
+      
+      setEventsRegisteredByMe(eventsRegistered);
 
       
       // eventsData.documents.map((event) => {
@@ -52,7 +72,7 @@ const myEvents = () => {
     }
     
     data()
-  },[eventsByMe]);
+  },[eventsByMe,currentUser]);
 
 
   const getEventImage = (id) => {
@@ -107,16 +127,6 @@ const myEvents = () => {
         <View key={index}>  
           <TouchableOpacity
               key={index}
-              // onPress={() => router.push({ pathname: '/eventDetail', params: {id: item.id, data: item} })}
-              onPress={() => {
-                // router.push({
-                //   pathname: "/eventDetail",
-                //   params: { id: item.id, title: item.title, item },
-                // });
-                // navigation.navigate("eventDetail", {
-                //   data: item,
-                // });
-              }}
               style={{
                 width: width > 370 ? "30%" : 'auto',
                 height: width > 370 ? 280 : 'auto',
@@ -154,6 +164,46 @@ const myEvents = () => {
       ))}
 
       <Text>Events I registerd for</Text>
+
+      {eventsRegisteredByMe.map((event,index) => (
+        <View key={index}>  
+          <TouchableOpacity
+              key={index}
+              style={{
+                width: width > 370 ? "30%" : 'auto',
+                height: width > 370 ? 280 : 'auto',
+                alignItems: "center",
+                justifyContent: "center",
+                marginVertical: 10,
+                marginHorizontal: 14,
+                // padding: 10,
+                backgroundColor: "#ffffff",
+                borderRadius: 10,
+                shadowColor: "#000000",
+                shadowOffset: {
+                  width: 8,
+                  height: 18,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 16,
+                elevation: 10,
+              }}
+            >
+              {/* <Image source={{ uri: getEventImage(event.$id) }} style={styles.image} /> */}
+              <View style={styles.innerView}>
+                <Text
+                  style={{ fontSize: 16, fontWeight: "400", color: "#000000" }}
+                >
+                  {event.event_name}
+                </Text>
+                <Text style={{ fontSize: 12, fontWeight: "400", color: "#000000" }}>
+                {new Date(event.dateTime).toUTCString()}
+                {/* {new Date(event.event_date).toString()} */}
+              </Text>     
+              </View> 
+            </TouchableOpacity>
+        </View>
+      ))}
 
     </ScrollView>
   )

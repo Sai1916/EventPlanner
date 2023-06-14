@@ -1,5 +1,5 @@
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation, useLocalSearchParams } from 'expo-router';
 import {Feather,FontAwesome5, Octicons} from 'react-native-vector-icons'
 import { account, databases } from '../appwrite';
@@ -21,13 +21,13 @@ const eventDetail = () => {
 
 
     // console.log("id: " + data.id);
-    // console.log("title: " + data.event_name);  
+    // console.log("title: " + data.event_name);   
     // console.log("date: " + new Date(data.dateTime).toISOString());  
 
     useLayoutEffect(() => {  
         navigation.setOptions({
             headerShown: true,
-            headerTitle: data.title,
+            headerTitle: data.event_name,
         })
     }, [])
 
@@ -36,29 +36,44 @@ const eventDetail = () => {
 
     const [attendees,setAttendees] = useState([]);
 
+    
     const user = account.get();
+    useEffect(() => {
+  
+      user.then((result) => {
+        // console.log("user result: " + result)  
+        setCurrentUser(result);
+      }).catch((error) => {console.log("error: " + error)});
 
-    user.then((result) => {
-      setCurrentUser(result);
-    }).catch((error) => {console.log("error: " + error)});
+      const listAttendees = databases.getDocument('647639e8382636fce548',
+      '647639f9c81c54babcbc',data.$id)
+      // console.log("listAttendees: " + listAttendees);
+      listAttendees.then((result) => {
+        console.log("result of get documents present event: " + result.attendees);
+        setAttendees(result.attendees);
+      }).catch((error) => {console.log("error in doc get: " + error)});
+      console.log("already registered: " + isAlreadyRegistered());
+      isAlreadyRegistered(); 
+    },[attendees,currentUser,isAlreadyRegistered])    
 
-    const isAlreadyRegistered = () => {
-      setAttendees(data.attendees);
-      if(attendees.length > 0 && attendees.includes(currentUser.email)){
-        return true;
+    const isAlreadyRegistered = () => {  
+      // console.log("attendees check: " + attendees);
+      if(attendees.includes(currentUser.email)){  
+        return true; 
       }
       else{
-        return false;
-      }
+        return false; 
+      } 
     }
 
+
+
     // console.log("attendees: " + data.attendees);
-    // console.log("already registered: " + isAlreadyRegistered());
 
     const onRegister = () => {
-
       console.log("currentUser: " + currentUser.email);
-      console.log("event id: " + data.$id);
+
+      // console.log("event id: " + data.$id);
 
       // const listAttendees = databases.getDocument('647639e8382636fce548',
       // '647639f9c81c54babcbc',data.$id)  
@@ -67,21 +82,22 @@ const eventDetail = () => {
       //   setAttendees(result.attendees);
       // }).catch((error) => {console.log("error in doc get: " + error)});
 
-
-      if(attendees.length > 0 && attendees.includes(currentUser.email)){
-        setMesssage("You are already registered for this event");
-        setModal(modal => !modal);
-      }
-      else{
-        const updateAttendees = databases.updateDocument('647639e8382636fce548',
-        '647639f9c81c54babcbc',data.$id,{
-          attendees: [...attendees,currentUser.email],
-        });
-        updateAttendees.then((result) => {
-          console.log("result of update: " + result);
-          setMesssage("You are registered for this event");
+      if(currentUser!=null){
+        if(attendees.includes(currentUser.email)){
+          setMesssage("You are already registered for this event"); 
           setModal(modal => !modal);
-        }).catch((error) => {console.log("error in doc update: " + error)});
+        }
+        else{
+          const updateAttendees = databases.updateDocument('647639e8382636fce548',
+          '647639f9c81c54babcbc',data.$id,{
+            attendees: [...attendees,currentUser.email],
+          });
+          updateAttendees.then((result) => {
+            console.log("result of update: " + result.attendees);
+            setMesssage("You are registered for this event");
+            setModal(modal => !modal);
+          }).catch((error) => {console.log("error in doc update: " + error)});
+        }
       }
 
     }
@@ -92,7 +108,7 @@ const eventDetail = () => {
     <View style={styles.container}>
       <Image source={{uri: data.image}} style={{width: '100%', height: width >370 ? 350 : 220, resizeMode: width > 370 ? 'cover' : 'stretch'}}/>
       {/* <Text style={styles.description}>{data.description}</Text> */}
-
+  
       { modal && (
           <View style={styles.overlay}>
             <View style={styles.innerOverlay}>
@@ -114,12 +130,12 @@ const eventDetail = () => {
         <FontAwesome5 name="users" size={22} color="#1c3a3e" />
         <Text style={styles.attendeesText}>Max no of Attendees: {data.capacity}</Text>
       </View>
-      <View style={styles.ViewContainer}>
-          <TouchableOpacity style={isAlreadyRegistered ? styles.registred : styles.btn} activeOpacity={0.6} onPress={isAlreadyRegistered ? () => {} : onRegister}>
-            <Text style={styles.btnText}>{isAlreadyRegistered ? 'Registred' : 'Register Now'}</Text>
-          </TouchableOpacity> 
-          {/* <TouchableOpacity style={styles.btnInfo} activeOpacity={0.6}>
-            <Text style={styles.btnText}>View More Info</Text>
+      <View style={styles.ViewContainer}>   
+          <TouchableOpacity style={isAlreadyRegistered() == true ? styles.registred : styles.btn } activeOpacity={0.6} onPress={onRegister}>
+            {isAlreadyRegistered() == true ? <Text style={styles.btnText}>Registered</Text> : <Text style={styles.btnText}>Register Now</Text>}
+          </TouchableOpacity>     
+          {/* <TouchableOpacity style={styles.btnInfo} activeOpacity={0.6}>  
+            <Text style={styles.btnText}>View More Info</Text>    
           </TouchableOpacity> */}
       </View>
     </View>

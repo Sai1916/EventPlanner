@@ -16,7 +16,7 @@ import { useLocalSearchParams } from "expo-router";
 import { Query } from "appwrite";
 import { account, databases } from "../../../appwrite";
 
-const width = Dimensions.get('screen').width;
+const width = Dimensions.get("screen").width;
 
 const home = () => {
   const navigation = useNavigation();
@@ -34,7 +34,7 @@ const home = () => {
       time: "12:00",
       location: "Hyderabad",
       maxAttendees: 100,
-      image: 
+      image:
         "https://www.amusephiladelphia.com/wp-content/uploads/2018/08/34735177654_35eb166e10_k.jpg",
     },
     {
@@ -72,40 +72,40 @@ const home = () => {
     },
   ];
 
+  const [eventsData, setEventsData] = useState([]);
 
-  const [eventsData,setEventsData] = useState([]);
-
-  const [currentUser,setCurrentUser] = useState({})
+  const [currentUser, setCurrentUser] = useState({});
 
   const user = account.get();
 
-  user.then((result) => {
-    setCurrentUser(result);
-  }).catch((error) => {console.log("error: " + error)});
+  user
+    .then((result) => {
+      setCurrentUser(result);
+    })
+    .catch((error) => {
+      console.log("error: " + error);
+    });
 
   useEffect(() => {
-      
-      async function data(){
-        
-        const eventsData = await databases.listDocuments(
-          // process.env.APPWRITE_DATABASE_ID,  
-          '647639e8382636fce548',
-          // process.env.APPWRITE_COLLECTION_ID,
-          '647639f9c81c54babcbc',
-          // process.enc.APPWRITE_STORAGE_BUCKET_ID,
-          // '64803265c286edb75d02', 
-          [
-             Query.notEqual("organizer_email", currentUser.email ),   
-            // Query.orderAsc("capacity"), 
-          ]
-        );        
-  
-        setEventsData(eventsData.documents);
-      }
-      
-      data()
-  },[eventsData])
+    async function data() {
+      const eventsData = await databases.listDocuments(
+        // process.env.APPWRITE_DATABASE_ID,
+        "647639e8382636fce548",
+        // process.env.APPWRITE_COLLECTION_ID,
+        "647639f9c81c54babcbc",
+        // process.enc.APPWRITE_STORAGE_BUCKET_ID,
+        // '64803265c286edb75d02',
+        [
+          Query.notEqual("organizer_email", currentUser.email),
+          // Query.orderAsc("capacity"),
+        ]
+      );
 
+      setEventsData(eventsData.documents);
+    }
+
+    data();
+  });
 
   return (
     <ScrollView
@@ -114,7 +114,7 @@ const home = () => {
       contentContainerStyle={{
         paddingVertical: 10,
         backgroundColor: "#ffffff",
-        flex:1
+        flex: 1,
       }}
     >
       {/* { modal ? (
@@ -125,12 +125,16 @@ const home = () => {
       ) : <></>} */}
 
       <View style={styles.ViewContainer}>
-        <TouchableOpacity style={styles.btn} activeOpacity={0.8} onPress={() => router.push('/home/createEvent')}>
+        <TouchableOpacity
+          style={styles.btn}
+          activeOpacity={0.8}
+          onPress={() => router.push("/home/createEvent")}
+        >
           <Text style={styles.btnText}>Create an Event</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
+        {/* <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
           <Text style={styles.btnText}>Reserve a Seat</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
           <Text style={styles.btnText}>Create an Event</Text>
         </TouchableOpacity>
@@ -151,50 +155,66 @@ const home = () => {
         >
           Events
         </Text>
-        <View style={width > 370 ? styles.itemsContainer : styles.mobileItemsContainer}>
-          { eventsData.length > 0 ? (eventsData.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              // onPress={() => router.push({ pathname: '/eventDetail', params: {id: item.id, data: item} })}
-              onPress={() => {
-                // router.push({
-                //   pathname: "/eventDetail",
-                //   params: { id: item.id, title: item.title, item },
-                // });
-                navigation.navigate("eventDetail", {
-                  data: item,
-                });
-              }}
-              style={{
-                width: width > 370 ? "30%" : 'auto',
-                height: width > 370 ? 280 : 'auto',
-                alignItems: "center",
-                justifyContent: "center",
-                marginVertical: 10,
-                marginHorizontal: 14,
-                // padding: 10,
-                backgroundColor: "#ffffff",
-                borderRadius: 10,
-                shadowColor: "#000000",
-                shadowOffset: {
-                  width: 8,
-                  height: 18,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 16,
-                elevation: 10,
-              }}
-            >
-              {/* <Image source={{ uri: item.image }} style={styles.image} /> */}
-              <View style={styles.innerView}>
-                <Text
-                  style={{ fontSize: 16, fontWeight: "400", color: "#000000" }}
-                >
-                  {item.event_name}
-                </Text>
-                <Text style={{ fontSize: 12, fontWeight: "400", color: "#000000" }}>
-                {new Date(item.dateTime).toUTCString()}
-              </Text>     
+        <View
+          style={
+            width > 370 ? styles.itemsContainer : styles.mobileItemsContainer
+          }
+        >
+          {eventsData.length > 0 ? (
+            eventsData.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                // onPress={() => router.push({ pathname: '/eventDetail', params: {id: item.id, data: item} })}
+                onPress={() => {
+                  // router.push({
+                  //   pathname: "/eventDetail",
+                  //   params: { id: item.id, title: item.title, item },
+                  // });
+                  navigation.navigate("eventDetail", {
+                    data: item,
+                  });
+                }}
+                style={{
+                  width: width > 370 ? "30%" : "auto",
+                  height: width > 370 ? 280 : "auto",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginVertical: 10,
+                  marginHorizontal: 14,
+                  // padding: 10,
+                  backgroundColor: "#ffffff",
+                  borderRadius: 10,
+                  shadowColor: "#000000",
+                  shadowOffset: {
+                    width: 8,
+                    height: 18,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 16,
+                  elevation: 10,
+                }}
+              >
+                {/* <Image source={{ uri: item.image }} style={styles.image} /> */}
+                <View style={styles.innerView}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "400",
+                      color: "#000000",
+                    }}
+                  >
+                    {item.event_name}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "400",
+                      color: "#000000",
+                    }}
+                  >
+                    {new Date(item.dateTime).toISOString()}
+                  </Text>
+                </View>
                 {/* <View style={{ flexDirection: "row", alignItems: "center" }}> 
                   <EvilIcons name="location" size={20} color="black" />
                   <Text
@@ -209,11 +229,13 @@ const home = () => {
                     {item.location}
                   </Text>
                 </View> */}
-              </View>
-            </TouchableOpacity>
-          ))) : <View>
-          <Text>No Events Found</Text>
-          </View>}
+              </TouchableOpacity>
+            ))
+          ) : (
+            <View>
+              <Text>No Events Found</Text>
+            </View>
+          )}
         </View>
       </View>
     </ScrollView>
@@ -223,14 +245,14 @@ const home = () => {
 export default home;
 
 const styles = StyleSheet.create({
-  overlay:{
-    position: 'absolute',
+  overlay: {
+    position: "absolute",
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
-    flex:1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    width: "100%",
+    height: "100%",
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
     zIndex: 100,
   },
   btn: {
@@ -262,11 +284,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
-  itemsContainer:{
+  itemsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
   },
-  mobileItemsContainer:{
+  mobileItemsContainer: {
     flexDirection: "column",
     width: "100%",
   },
