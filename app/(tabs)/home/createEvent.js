@@ -1,4 +1,4 @@
-import { Alert, Image, StyleSheet, Text, View, Platform } from "react-native";
+import { Alert, Image, StyleSheet, Text, View, Platform, Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button, TextInput } from "react-native-paper";
 import { TouchableOpacity } from "react-native";
@@ -10,11 +10,15 @@ import * as DocumentPicker from 'expo-document-picker';
 import { InputFile } from 'appwrite';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
+const width = Dimensions.get("screen").width;
+const height = Dimensions.get("screen").height;
+
 const createEvent = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [email, setEmail] = useState("");
   const [capacity, setCapacity] = useState();
+  const [address, setAddress] = useState("");
 
   const [modal,setModal] = useState(false); 
 
@@ -53,12 +57,16 @@ const createEvent = () => {
       if (!description) {
         return Alert.alert("Please enter event description");
       }
+      if (!address) {
+        return Alert.alert("Please enter valid address");
+      }
       // if (!image) {
       //   return Alert.alert("Please upload an image");
       // }
         console.log("name: ", name);
         console.log("email: ", email);
         console.log("capacity: ", capacity);
+        console.log("address: ", address);
 
         const finalDateTime = dateValue.toLocaleString([], {
           hour: '2-digit',
@@ -79,7 +87,7 @@ const createEvent = () => {
                 capacity: capacity, 
                 dateTime: finalDateTime,
                 description: description,
-                // time: timeValue,
+                address: address,
             }
         );
 
@@ -89,12 +97,11 @@ const createEvent = () => {
             setEmail("");
             setCapacity("");
             setDescription("");
+            setAddress("");
             setDateValue(new Date());
             setTimeValue(new Date().getTime());
             setImage(null);
             // const  uploadFile = storage.createFile('64803265c286edb75d02', result.$id, new File(image,image.split('/')[-1]));  
-
-            // console.log("imagetype: ",imageResult.mimeType);
 
             // const blob = new Blob([JSON.stringify(imageResult, null, 2)], {
             //   // type: imageResult.mimeType, 
@@ -125,32 +132,11 @@ const createEvent = () => {
 
     }
 
-    // const response = ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    // console.log("status: ", response);    
-    // console.log("permissions: ", permissions); 
-
     const [image, setImage] = useState(null);
     const [imageResult,setImageResult] = useState(null)
 
     const pickImage = async () => {
-      // No permissions request is necessary for launching the image library
-      // let result = await ImagePicker.launchImageLibraryAsync({
-      //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      //   allowsEditing: true,
-      //   aspect: [4, 3],
-      //   quality: 1,
-      // });
-
-      // console.log(result);
-
-      // if (!result.canceled) {
-      //   setImage(result.assets[0].uri);
-      //   setImageResult(result);
-      // }
-
-
-
+      
       ///// document picker code
 
       const resultDocument = await DocumentPicker.getDocumentAsync({type: 'image/*',copyToCacheDirectory: true});
@@ -184,7 +170,6 @@ const createEvent = () => {
       // console.log("dateValue: ", dateValue);
       
     }
-    // console.log("timeValue: ", timeValue); 
 
 
   return (
@@ -233,6 +218,13 @@ const createEvent = () => {
         keyboardType="numeric"
         style={styles.inputBox}
       />
+      <TextInput 
+        label="Event Address"
+        mode="outlined"
+        value={address}
+        onChangeText={(val) => setAddress(val)}
+        style={styles.inputBox}
+      />
 
       {/* {image && <Image source={{ uri: image }} style={{ width: "96%", height: 200, resizeMode: 'contain', borderRadius: 10 }} />}
       <Button icon="image" mode="elevated" onPress={pickImage}>
@@ -267,8 +259,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
+    width: width,
+    height: height,
     flex:1,
     backgroundColor: 'rgba(0,0,0,0.5)',
     zIndex: 100,
@@ -278,6 +270,8 @@ const styles = StyleSheet.create({
   overlayText:{
     fontSize: 20,
     fontWeight: 'bold',
+    flexWrap: 'wrap',
+    textAlign: 'center',
   },
   innerOverlay:{
     backgroundColor: 'rgba(255,255,255,1)',
@@ -286,6 +280,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'space-around',
     height: 200,
+    width: width*0.9,
   },
   closeBtn:{
     paddingHorizontal: 10,

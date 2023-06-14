@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -15,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { Query } from "appwrite";
 import { account, databases } from "../../../appwrite";
+import { Button } from "react-native-paper";
 
 const width = Dimensions.get("screen").width;
 
@@ -76,6 +78,8 @@ const home = () => {
 
   const [currentUser, setCurrentUser] = useState({});
 
+  const [loading, setLoading] = useState(true);
+
   const user = account.get();
 
   user
@@ -102,6 +106,8 @@ const home = () => {
       );
 
       setEventsData(eventsData.documents);
+
+      setLoading(false);
     }
 
     data();
@@ -114,7 +120,9 @@ const home = () => {
       contentContainerStyle={{
         paddingVertical: 10,
         backgroundColor: "#ffffff",
-        flex: 1,
+        // flex: 1,
+        width: "100%",
+        height: "100%",
       }}
     >
       {/* { modal ? (
@@ -143,82 +151,105 @@ const home = () => {
         </TouchableOpacity> */}
       </View>
 
-      <View>
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "400",
-            color: "#000000",
-            paddingVertical: 10,
-            textAlign: "center",
-          }}
-        >
-          Events
-        </Text>
-        <View
-          style={
-            width > 370 ? styles.itemsContainer : styles.mobileItemsContainer
-          }
-        >
-          {eventsData.length > 0 ? (
-            eventsData.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                // onPress={() => router.push({ pathname: '/eventDetail', params: {id: item.id, data: item} })}
-                onPress={() => {
-                  // router.push({
-                  //   pathname: "/eventDetail",
-                  //   params: { id: item.id, title: item.title, item },
-                  // });
-                  navigation.navigate("eventDetail", {
-                    data: item,
-                  });
-                }}
-                style={{
-                  width: width > 370 ? "30%" : "auto",
-                  height: width > 370 ? 280 : "auto",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginVertical: 10,
-                  marginHorizontal: 14,
-                  // padding: 10,
-                  backgroundColor: "#ffffff",
-                  borderRadius: 10,
-                  shadowColor: "#000000",
-                  shadowOffset: {
-                    width: 8,
-                    height: 18,
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 16,
-                  elevation: 10,
-                }}
-              >
-                {/* <Image source={{ uri: item.image }} style={styles.image} /> */}
-                <View style={styles.innerView}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "400",
-                      color: "#000000",
-                    }}
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text style={styles.loadingText}>Loading.....</Text>
+        </View>
+      ) : (
+        <View>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "400",
+              color: "#000000",
+              paddingVertical: 10,
+              textAlign: "center",
+            }}
+          >
+            Events
+          </Text>
+          <View
+            style={
+              width > 370 ? styles.itemsContainer : styles.mobileItemsContainer
+            }
+          >
+            {eventsData.length > 0 ? (
+              eventsData.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  activeOpacity={0.8}
+                  // onPress={() => router.push({ pathname: '/eventDetail', params: {id: item.id, data: item} })}
+                  // onPress={() => {
+                  //   // router.push({
+                  //   //   pathname: "/eventDetail",
+                  //   //   params: { id: item.id, title: item.title, item },
+                  //   // });
+                  //   navigation.navigate("eventDetail", {
+                  //     data: item,
+                  //   });
+                  // }}
+                  style={{
+                    width: width > 370 ? "30%" : "auto",
+                    height: width > 370 ? 280 : "auto",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "row",
+                    marginVertical: 10,
+                    marginHorizontal: 14,
+                    // padding: 10,
+                    backgroundColor: "#ffffff",
+                    borderRadius: 10,
+                    shadowColor: "#000000",
+                    shadowOffset: {
+                      width: 8,
+                      height: 18,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 16,
+                    elevation: 10,
+                  }}
+                >
+                  {/* <Image source={{ uri: item.image }} style={styles.image} /> */}
+                  <View style={styles.innerView}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "400",
+                        color: "#000000",
+                        marginVertical: 10,
+                      }}
+                    >
+                      {item.event_name}
+                    </Text>
+
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "400",
+                        color: "#000000",
+                        marginVertical: 10,
+                      }}
+                    >
+                      {new Date(item.dateTime).toUTCString()}
+                    </Text>
+                  </View>
+                  <Button
+                    icon="arrow-right"
+                    contentStyle={{ flexDirection: "row-reverse" }}
+                    mode="elevated"
+                    onPress={() =>
+                      navigation.navigate("eventDetail", {
+                        data: item,
+                      })
+                    }
                   >
-                    {item.event_name}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: "400",
-                      color: "#000000",
-                    }}
-                  >
-                    {new Date(item.dateTime).toISOString()}
-                  </Text>
-                </View>
-                {/* <View style={{ flexDirection: "row", alignItems: "center" }}> 
+                    View
+                  </Button>
+                  {/* <View style={{ flexDirection: "row", alignItems: "center" }}> 
                   <EvilIcons name="location" size={20} color="black" />
                   <Text
-                    style={{
+                    style={{ 
                       fontSize: 14,
                       fontWeight: "400",
                       color: "#000000",
@@ -229,15 +260,16 @@ const home = () => {
                     {item.location}
                   </Text>
                 </View> */}
-              </TouchableOpacity>
-            ))
-          ) : (
-            <View>
-              <Text>No Events Found</Text>
-            </View>
-          )}
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View>
+                <Text>No Events Found</Text>
+              </View>
+            )}
+          </View>
         </View>
-      </View>
+      )}
     </ScrollView>
   );
 };
@@ -307,9 +339,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     // borderRadius: 4,
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
+    // flexDirection: "row",
+    alignItems: "flex-start",
+    // width: "100%",
+    // height: "100%",
     justifyContent: "space-between",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 20,
+    margin: 20,
+    fontFamily: "sans-serif",
   },
 });

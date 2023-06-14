@@ -47,7 +47,7 @@ const eventDetail = () => {
 
       const listAttendees = databases.getDocument('647639e8382636fce548',
       '647639f9c81c54babcbc',data.$id)
-      // console.log("listAttendees: " + listAttendees);
+      // console.log("listAttendees: " + listAttendees); 
       listAttendees.then((result) => {
         console.log("result of get documents present event: " + result.attendees);
         setAttendees(result.attendees);
@@ -84,7 +84,7 @@ const eventDetail = () => {
 
       if(currentUser!=null){
         if(attendees.includes(currentUser.email)){
-          setMesssage("You are already registered for this event"); 
+          setMesssage("You already registered for this event"); 
           setModal(modal => !modal);
         }
         else{
@@ -106,7 +106,7 @@ const eventDetail = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={{uri: data.image}} style={{width: '100%', height: width >370 ? 350 : 220, resizeMode: width > 370 ? 'cover' : 'stretch'}}/>
+      {/* <Image source={{uri: data.image}} style={{width: '100%', height: width >370 ? 350 : 220, resizeMode: width > 370 ? 'cover' : 'stretch'}}/> */}
       {/* <Text style={styles.description}>{data.description}</Text> */}
   
       { modal && (
@@ -127,9 +127,13 @@ const eventDetail = () => {
         {/* <Text style={styles.timeText}>{data.time}</Text> */}
       </View>
       <View style={styles.attendeesContainer}>
+        <Text style={styles.attendeesText}>Event Desscription: {data.description}</Text>
+      </View>
+      <View style={styles.attendeesContainer}>
         <FontAwesome5 name="users" size={22} color="#1c3a3e" />
         <Text style={styles.attendeesText}>Max no of Attendees: {data.capacity}</Text>
       </View>
+      {currentUser.email!=null && 
       <View style={styles.ViewContainer}>   
           <TouchableOpacity style={isAlreadyRegistered() == true ? styles.registred : styles.btn } activeOpacity={0.6} onPress={onRegister}>
             {isAlreadyRegistered() == true ? <Text style={styles.btnText}>Registered</Text> : <Text style={styles.btnText}>Register Now</Text>}
@@ -138,6 +142,7 @@ const eventDetail = () => {
             <Text style={styles.btnText}>View More Info</Text>    
           </TouchableOpacity> */}
       </View>
+      }
     </View>
   )
 }
