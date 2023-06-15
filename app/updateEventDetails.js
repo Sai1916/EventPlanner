@@ -30,6 +30,9 @@ const updateEventDetails = () => {
 
   const router = useRouter();
 
+  const [btnLoading,setBtnLoading] = useState(false);
+
+
   console.log("data updated: ", data);
 
   const [modal, setModal] = useState(false);
@@ -45,6 +48,9 @@ const updateEventDetails = () => {
 
   const onSubmit = () => {
     console.log("onSubmit");
+
+    setBtnLoading(load => !load);
+
     if (
       data.event_name == name &&
       data.organizer_email == email &&
@@ -74,6 +80,7 @@ const updateEventDetails = () => {
           console.log("result of update: " + result);
           setMesssage("Event details Updated Successfully");
           setModal((modal) => !modal);
+          setBtnLoading(load => !load);
         })
         .catch((error) => {
           console.log("error in details update: " + error);
@@ -140,13 +147,15 @@ const updateEventDetails = () => {
         style={styles.inputBox}
       />
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.btn}
         activeOpacity={0.7}
         onPress={onSubmit}
       >
         <Text style={styles.btnText}>Update Details</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      <Button mode="contained" dark={true} labelStyle={styles.btnText} loading={btnLoading} style={styles.btn} onPress={onSubmit}>Update Details</Button>
+
     </SafeAreaView>
   );
 };
@@ -184,7 +193,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     alignItems: "center",
-    backgroundColor: "#000000",
+    // backgroundColor: "#000000",
     borderRadius: 26,
     width: "50%",
     alignSelf: "center",
@@ -195,8 +204,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     color: "#ffffff",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    // paddingHorizontal: 20,
+    // paddingVertical: 10,
   },
   overlay: {
     position: "absolute",

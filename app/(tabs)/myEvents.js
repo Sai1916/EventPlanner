@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -27,9 +28,65 @@ const myEvents = () => {
 
   const [loading, setLoading] = useState(true);
 
+  const [refreshing,setRefreshing] = useState(false);
+
   const user = account.get();
 
   const navigation = useNavigation();
+
+  async function data() {
+    const eventsData = await databases.listDocuments(
+      // process.env.APPWRITE_DATABASE_ID,
+      "647639e8382636fce548",
+      // process.env.APPWRITE_COLLECTION_ID,
+      "647639f9c81c54babcbc",
+      // process.enc.APPWRITE_STORAGE_BUCKET_ID,
+      // '64803265c286edb75d02',
+      [
+        Query.equal("organizer_email", currentUser.email),
+        // Query.orderAsc("capacity"),
+      ]
+    );
+
+    const totalDocuments = await databases.listDocuments(
+      "647639e8382636fce548",
+      "647639f9c81c54babcbc"
+    );
+
+    let eventsRegistered = [];
+
+    totalDocuments.documents.map((event) => {
+      if (event.attendees.includes(currentUser.email)) {
+        eventsRegistered.push(event);
+      }
+    });
+
+    // console.log("eventsRegisteredByMe: ",eventsRegistered);
+
+    setEventsRegisteredByMe(eventsRegistered);
+
+    // eventsData.documents.map((event) => {
+
+    //   const getEventFile = storage.getFile('64803265c286edb75d02',event.$id);
+
+    //   getEventFile.then(function (response) {
+    //     console.log("resp: ",response); // Success
+    //   }, function (error) {
+    //     console.log(error); // Failure
+    //   });
+    // })
+
+    setEventsByMe(eventsData.documents);
+
+    setLoading(false);
+  }
+
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    data();
+    setRefreshing(false); 
+  }
 
   useEffect(() => {
     user
@@ -40,55 +97,9 @@ const myEvents = () => {
         console.log("error: " + error);
       });
 
-    async function data() {
-      const eventsData = await databases.listDocuments(
-        // process.env.APPWRITE_DATABASE_ID,
-        "647639e8382636fce548",
-        // process.env.APPWRITE_COLLECTION_ID,
-        "647639f9c81c54babcbc",
-        // process.enc.APPWRITE_STORAGE_BUCKET_ID,
-        // '64803265c286edb75d02',
-        [
-          Query.equal("organizer_email", currentUser.email),
-          // Query.orderAsc("capacity"),
-        ]
-      );
-
-      const totalDocuments = await databases.listDocuments(
-        "647639e8382636fce548",
-        "647639f9c81c54babcbc"
-      );
-
-      let eventsRegistered = [];
-
-      totalDocuments.documents.map((event) => {
-        if (event.attendees.includes(currentUser.email)) {
-          eventsRegistered.push(event);
-        }
-      });
-
-      // console.log("eventsRegisteredByMe: ",eventsRegistered);
-
-      setEventsRegisteredByMe(eventsRegistered);
-
-      // eventsData.documents.map((event) => {
-
-      //   const getEventFile = storage.getFile('64803265c286edb75d02',event.$id);
-
-      //   getEventFile.then(function (response) {
-      //     console.log("resp: ",response); // Success
-      //   }, function (error) {
-      //     console.log(error); // Failure
-      //   });
-      // })
-
-      setEventsByMe(eventsData.documents);
-
-      setLoading(false);
-    }
     // setLoading(true);
     data();
-  }, [eventsByMe, currentUser]);
+  });
 
   const getEventImage = (id) => {
     const getEventFile = storage.getFilePreview("64803265c286edb75d02", id);
@@ -144,7 +155,11 @@ const myEvents = () => {
           <Text style={styles.loadingText}>Loading.....</Text>
         </View>
       ) : (
-        <ScrollView>
+        <ScrollView 
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           <Text style={styles.titleHeading}>Events Posted By Me</Text>
           {eventsByMe.map((event, index) => (
             <View key={index}>
@@ -187,6 +202,9 @@ const myEvents = () => {
                   >
                     {new Date(event.dateTime).toUTCString()}
                     {/* {new Date(event.event_date).toString()} */}
+                  </Text>
+                  <Text style={styles.eventText}>
+                    Event Address: {event.address}
                   </Text>
                 </View>
                 <View style={styles.btnContainer}>

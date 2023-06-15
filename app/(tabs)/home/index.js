@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   View,
   useWindowDimensions,
-  LogBox
+  LogBox,
+  RefreshControl
 } from "react-native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { EvilIcons } from "react-native-vector-icons";
@@ -83,6 +84,8 @@ const home = () => {
 
   const [loading, setLoading] = useState(true);
 
+  const [refreshing,setRefreshing] = useState(false);
+
   const user = account.get();
 
     useEffect(() => {
@@ -96,7 +99,6 @@ const home = () => {
       });
     },[currentUser])
 
-  useEffect(() => {
     async function data() {
       const eventsData = await databases.listDocuments(
         // process.env.APPWRITE_DATABASE_ID,
@@ -116,8 +118,15 @@ const home = () => {
       setLoading(false);
     }
 
+  useEffect(() => {
     data();
   });
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    data();
+    setRefreshing(false); 
+  }
 
   return (
     <ScrollView
@@ -130,6 +139,9 @@ const home = () => {
         width: "100%",
         height: "100%",
       }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       {/* { modal ? (
           <View style={styles.overlay}>
