@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   useWindowDimensions,
+  LogBox
 } from "react-native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { EvilIcons } from "react-native-vector-icons";
@@ -24,6 +25,8 @@ const home = () => {
   const navigation = useNavigation();
 
   const router = useRouter();
+
+  LogBox.ignoreAllLogs(true)
 
   // console.log("width: " + width);
 
@@ -82,13 +85,16 @@ const home = () => {
 
   const user = account.get();
 
-  user
-    .then((result) => {
-      setCurrentUser(result);
-    })
-    .catch((error) => {
-      console.log("error: " + error);
-    });
+    useEffect(() => {
+      user
+      .then((result) => {
+        setCurrentUser(result);
+      })
+      .catch((error) => {
+        setCurrentUser({});
+        console.log("error in home: " + error);
+      });
+    },[currentUser])
 
   useEffect(() => {
     async function data() {
@@ -263,8 +269,13 @@ const home = () => {
                 </TouchableOpacity>
               ))
             ) : (
-              <View>
-                <Text>No Events Found</Text>
+              <View style={{
+                width: width > 370 ? "30%" : "auto",
+                height: width > 370 ? 280 : "auto",
+                alignItems: "center",
+                justifyContent: "center", 
+              }}>
+                <Text style={styles.noEventsText}>No Events Found</Text>
               </View>
             )}
           </View>
@@ -308,6 +319,10 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     paddingVertical: 2,
     paddingHorizontal: 20,
+  },
+  noEventsText:{
+    fontSize: 18,
+    fontWeight: "700",
   },
   ViewContainer: {
     width: "100%",

@@ -1,6 +1,6 @@
 import { Redirect, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View,LogBox } from "react-native";
 import { account, client } from "../appwrite";
 import { useContext, useEffect, useState } from "react";
 import { UserContext, UserProvider } from "../store/store";
@@ -9,6 +9,8 @@ import { PaperProvider } from "react-native-paper";
 
 export default function Page() {
   // const { user, setUser, logout } = useContext(UserContext);
+ 
+  LogBox.ignoreAllLogs(true);
 
   const [userData, setUserData] = useState({});
 

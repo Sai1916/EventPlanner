@@ -79,6 +79,7 @@ const login = () => {
           style={styles.textInput}
           placeholderTextColor={"black"}
           cursorColor={"black"}
+          secureTextEntry={true}
         />
         {/* <Button title='Login' onPress={onSubmitLogin} style={styles.btn}/> */}
         <TouchableOpacity

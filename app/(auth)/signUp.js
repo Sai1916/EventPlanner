@@ -105,6 +105,7 @@ const signUp = () => {
           style={styles.textInput}
           placeholderTextColor={"black"}
           cursorColor={"black"}
+          secureTextEntry={true}
         />
 
         <TouchableOpacity
