@@ -11,12 +11,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon.png", 
     "slug": "EventPlanner",
     "extra": {
       "eas": {
         "projectId": "7fd65ce9-3969-4973-88fe-5e0a3574f8fb"
-      }
+      }   
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
