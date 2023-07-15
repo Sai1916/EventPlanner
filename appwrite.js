@@ -1,13 +1,14 @@
-import { Account, Avatars, Client, Databases, ID, Storage } from 'appwrite';
+import { Account, Avatars, Client, Databases, ID, Storage } from 'appwrite'; 
+import {APPWRITE_API, APPWRITE_PROJECT_ID} from '@env'
 
-const client = new Client();
+const client = new Client();  
 
 
 client
-.setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint  
-.setProject('647615fed2e27f0b2a49') // Your project ID);
-
-const account = new Account(client);
+.setEndpoint(APPWRITE_API) // Your API Endpoint  
+.setProject(APPWRITE_PROJECT_ID) // Your project ID); 
+   
+const account = new Account(client);  
 
 const avatars = new Avatars(client);
 

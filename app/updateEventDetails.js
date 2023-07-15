@@ -13,6 +13,7 @@ import { Button, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Octicons } from "react-native-vector-icons";
 import { databases } from "../appwrite";
+import { APPWRITE_COLLECTION_ID, APPWRITE_DATABASE_ID } from '@env';  
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -64,9 +65,9 @@ const updateEventDetails = () => {
     } else {
       console.log("in else ");
       const updateDetails = databases.updateDocument(
-        "647639e8382636fce548",
-        "647639f9c81c54babcbc",
-        data.$id,
+        APPWRITE_DATABASE_ID,
+        APPWRITE_COLLECTION_ID,
+        data.$id,  
         {
           event_name: name,
           organizer_email: email,

@@ -48,7 +48,7 @@ export default function Page() {
       { !loading ? <Loading /> : (  
         userData!=null ? <Redirect href={"/home"} /> : <Redirect href={"/login"} /> 
       )}
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
     </PaperProvider>
   );
 }

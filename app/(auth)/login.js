@@ -33,8 +33,8 @@ const login = () => {
     if (!password) {
       return Alert.alert("Please enter a password");
     }
-    console.log("email: " + email);
-    console.log("password: " + password);
+    // console.log("email: " + email);
+    // console.log("password: " + password);
 
     return await account
       .createEmailSession(email, password)

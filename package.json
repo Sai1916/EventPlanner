@@ -2,13 +2,14 @@
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
-    "ios": "expo start --ios", 
+    "ios": "expo start --ios",
     "web": "expo start --web"
   },
-  "dependencies": {  
+  "dependencies": {
     "@react-native-community/datetimepicker": "6.7.3",
     "@react-navigation/native": "^6.1.6",
     "appwrite": "^11.0.0",
+    "axios": "^1.4.0",
     "expo": "^48.0.7",
     "expo-blur": "~12.2.2",
     "expo-constants": "~14.2.1",
@@ -35,7 +36,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
-    "@babel/plugin-proposal-export-namespace-from": "^7.18.9"
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
+    "react-native-dotenv": "^3.4.9"
   },
   "resolutions": {
     "metro": "^0.73.7",

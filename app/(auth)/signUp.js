@@ -60,9 +60,10 @@ const signUp = () => {
       return Alert.alert("Please enter your name");
     }
 
-    console.log("name: " + name);
-    console.log("email: " + email);
-    console.log("password: " + password);
+    // console.log("name: " + name);
+    // console.log("email: " + email);
+    // console.log("password: " + password);
+    
     await account.create(ID.unique(), email, password, name);
     return await account
       .createEmailSession(email, password)

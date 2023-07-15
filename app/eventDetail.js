@@ -4,6 +4,7 @@ import { useNavigation, useLocalSearchParams } from 'expo-router';
 import {Feather,FontAwesome5, Octicons} from 'react-native-vector-icons'
 import { account, databases } from '../appwrite';
 import { Button } from 'react-native-paper';
+import { APPWRITE_COLLECTION_ID, APPWRITE_DATABASE_ID } from '@env'
 
 const width = Dimensions.get('screen').width;
 
@@ -41,15 +42,15 @@ const eventDetail = () => {
     useEffect(() => {
   
       user.then((result) => {
-        // console.log("user result: " + result)  
+        console.log("user result: " + result)  
         setCurrentUser(result);
       }).catch((error) => {console.log("error: " + error)});
 
-      const listAttendees = databases.getDocument('647639e8382636fce548',
-      '647639f9c81c54babcbc',data.$id)
+      const listAttendees = databases.getDocument(APPWRITE_DATABASE_ID,
+        APPWRITE_COLLECTION_ID,data.$id)
       // console.log("listAttendees: " + listAttendees); 
       listAttendees.then((result) => {
-        console.log("result of get documents present event: " + result.attendees);
+        // console.log("result of get documents present event: " + result.attendees);
         setAttendees(result.attendees);
       }).catch((error) => {console.log("error in doc get: " + error)});
       console.log("already registered: " + isAlreadyRegistered());
@@ -73,23 +74,15 @@ const eventDetail = () => {
     const onRegister = () => {
       console.log("currentUser: " + currentUser.email);
 
-      // console.log("event id: " + data.$id);
-
-      // const listAttendees = databases.getDocument('647639e8382636fce548',
-      // '647639f9c81c54babcbc',data.$id)  
-      // listAttendees.then((result) => {
-      //   console.log("result of present event: " + result);
-      //   setAttendees(result.attendees);
-      // }).catch((error) => {console.log("error in doc get: " + error)});
-
       if(currentUser!=null){
         if(attendees.includes(currentUser.email)){
           setMesssage("You already registered for this event"); 
           setModal(modal => !modal);
         }
         else{
-          const updateAttendees = databases.updateDocument('647639e8382636fce548',
-          '647639f9c81c54babcbc',data.$id,{
+          const updateAttendees = databases.updateDocument(APPWRITE_DATABASE_ID,
+            APPWRITE_COLLECTION_ID,
+            data.$id,{
             attendees: [...attendees,currentUser.email],
           });
           updateAttendees.then((result) => {

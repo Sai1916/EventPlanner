@@ -16,8 +16,9 @@ import { account, databases, storage } from "../../appwrite";
 import { Query } from "appwrite";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { APPWRITE_DATABASE_ID, APPWRITE_COLLECTION_ID, APPWRITE_BUCKET_ID } from '@env';  
 
-const width = Dimensions.get("screen").width;
+const width = Dimensions.get("screen").width; 
 const height = Dimensions.get("screen").height;
 
 const myEvents = () => {
@@ -37,11 +38,9 @@ const myEvents = () => {
   async function data() {
     const eventsData = await databases.listDocuments(
       // process.env.APPWRITE_DATABASE_ID,
-      "647639e8382636fce548",
+      APPWRITE_DATABASE_ID,
       // process.env.APPWRITE_COLLECTION_ID,
-      "647639f9c81c54babcbc",
-      // process.enc.APPWRITE_STORAGE_BUCKET_ID,
-      // '64803265c286edb75d02',
+      APPWRITE_COLLECTION_ID, 
       [
         Query.equal("organizer_email", currentUser.email),
         // Query.orderAsc("capacity"),
@@ -49,8 +48,10 @@ const myEvents = () => {
     );
 
     const totalDocuments = await databases.listDocuments(
-      "647639e8382636fce548",
-      "647639f9c81c54babcbc"
+      // process.env.APPWRITE_DATABASE_ID,
+      APPWRITE_DATABASE_ID,
+      // process.env.APPWRITE_COLLECTION_ID,
+      APPWRITE_COLLECTION_ID, 
     );
 
     let eventsRegistered = [];
@@ -84,7 +85,7 @@ const myEvents = () => {
 
   const onRefresh = () => {
     setRefreshing(true);
-    data();
+    data();  
     setRefreshing(false); 
   }
 
@@ -102,7 +103,7 @@ const myEvents = () => {
   });
 
   const getEventImage = (id) => {
-    const getEventFile = storage.getFilePreview("64803265c286edb75d02", id);
+    const getEventFile = storage.getFilePreview(APPWRITE_BUCKET_ID, id);
     const finalImage = "" + getEventFile;
     // console.log("finalImage:---",finalImage);
     return finalImage;
@@ -156,6 +157,7 @@ const myEvents = () => {
         </View>
       ) : (
         <ScrollView 
+          // contentContainerStyle={{ backgroundColor: "#ffffff" }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
@@ -184,11 +186,11 @@ const myEvents = () => {
                   shadowRadius: 16,
                   elevation: 10,
                 }}
-              >
-                {/* <Image source={{ uri: getEventImage(event.$id) }} style={styles.image} /> */}
+              > 
+                {/* { (event.image != "n/a" || event.image != "-") && <Image source={{ uri: getEventImage(event.$id) }} style={styles.image} /> } */}
                 <View style={styles.innerView}>
                   <Text style={styles.eventText}>
-                    Event Title: {event.event_name}
+                    Event Title: {event.event_name} 
                   </Text>
                   <Text style={styles.eventText}>
                     Event Description: {event.description}
@@ -280,7 +282,7 @@ const myEvents = () => {
                   <Text
                     style={{
                       fontSize: 12,
-                      fontWeight: "400",
+                      fontWeight: "400",  
                       color: "#000000",
                     }}
                   >

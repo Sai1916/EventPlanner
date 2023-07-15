@@ -9,25 +9,25 @@ import {
   View,
   useWindowDimensions,
   LogBox,
-  RefreshControl
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { EvilIcons } from "react-native-vector-icons";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
 import { Query } from "appwrite";
 import { account, databases } from "../../../appwrite";
 import { Button } from "react-native-paper";
+import { APPWRITE_DATABASE_ID, APPWRITE_COLLECTION_ID } from "@env";
 
 const width = Dimensions.get("screen").width;
+const height = Dimensions.get("screen").height;
 
 const home = () => {
   const navigation = useNavigation();
 
   const router = useRouter();
 
-  LogBox.ignoreAllLogs(true)
+  LogBox.ignoreAllLogs(true);
 
   // console.log("width: " + width);
 
@@ -84,12 +84,20 @@ const home = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const [refreshing,setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
+  const [position, setPosition] = useState(parseInt(0));
+
+  const scrollViewHeight = eval(height - position);
+
+  // console.log("height: " + height);
+  // console.log("position: " + position);
+
+  // console.log("scrollViewHeight: " + scrollViewHeight)
   const user = account.get();
 
-    useEffect(() => {
-      user
+  useEffect(() => {
+    user
       .then((result) => {
         setCurrentUser(result);
       })
@@ -97,26 +105,24 @@ const home = () => {
         setCurrentUser({});
         console.log("error in home: " + error);
       });
-    },[currentUser])
+  }, [currentUser]);
 
-    async function data() {
-      const eventsData = await databases.listDocuments(
-        // process.env.APPWRITE_DATABASE_ID,
-        "647639e8382636fce548",
-        // process.env.APPWRITE_COLLECTION_ID,
-        "647639f9c81c54babcbc",
-        // process.enc.APPWRITE_STORAGE_BUCKET_ID,
-        // '64803265c286edb75d02',
-        [
-          Query.notEqual("organizer_email", currentUser.email),
-          // Query.orderAsc("capacity"),
-        ]
-      );
+  async function data() {
+    const eventsData = await databases.listDocuments(
+      // process.env.APPWRITE_DATABASE_ID,
+      APPWRITE_DATABASE_ID,
+      // process.env.APPWRITE_COLLECTION_ID,
+      APPWRITE_COLLECTION_ID,
+      [
+        Query.notEqual("organizer_email", currentUser.email),
+        // Query.orderAsc("capacity"),
+      ]
+    );
 
-      setEventsData(eventsData.documents);
+    setEventsData(eventsData.documents);
 
-      setLoading(false);
-    }
+    setLoading(false);
+  }
 
   useEffect(() => {
     data();
@@ -125,73 +131,55 @@ const home = () => {
   const onRefresh = () => {
     setRefreshing(true);
     data();
-    setRefreshing(false); 
-  }
+    setRefreshing(false);
+  };
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      nestedScrollEnabled={true}
-      contentContainerStyle={{
-        paddingVertical: 10,
-        backgroundColor: "#ffffff",
-        // flex: 1,
-        width: "100%",
-        height: "100%",
-      }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      {/* { modal ? (
-          <View style={styles.overlay}>
-            <Text style={styles.overlayText}>{params?.message}</Text>
-            <Text onPress={() => setModal(!modal)}>Close</Text>
-          </View>
-      ) : <></>} */}
-
-      <View style={styles.ViewContainer}>
-        <TouchableOpacity
-          style={styles.btn}
-          activeOpacity={0.8}
-          onPress={() => router.push("/home/createEvent")}
-        >
-          <Text style={styles.btnText}>Create an Event</Text>
-        </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
-          <Text style={styles.btnText}>Reserve a Seat</Text>
-        </TouchableOpacity> */}
-        {/* <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
-          <Text style={styles.btnText}>Create an Event</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
-          <Text style={styles.btnText}>Create an Event</Text>
-        </TouchableOpacity> */}
-      </View>
-
+    <View style={styles.homeContainer}>
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0000ff" />
           <Text style={styles.loadingText}>Loading.....</Text>
         </View>
       ) : (
-        <View>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "400",
-              color: "#000000",
-              paddingVertical: 10,
-              textAlign: "center",
-            }}
-          >
-            Events
-          </Text>
-          <View
-            style={
-              width > 370 ? styles.itemsContainer : styles.mobileItemsContainer
-            }
-          >
+        <ScrollView
+          // showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          <View style={styles.ViewContainer}>
+            <TouchableOpacity
+              style={styles.btn}
+              activeOpacity={0.8}
+              onPress={() => router.push("/home/createEvent")}
+            >
+              <Text style={styles.btnText}>Create an Event</Text>
+            </TouchableOpacity>
+            {/* <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
+          <Text style={styles.btnText}>Reserve a Seat</Text>
+        </TouchableOpacity> */}
+            {/* <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
+          <Text style={styles.btnText}>Create an Event</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btn} activeOpacity={0.8}>
+          <Text style={styles.btnText}>Create an Event</Text>
+        </TouchableOpacity> */}
+          </View>
+
+          <>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "400",
+                color: "#000000",
+                paddingVertical: 10,
+                flex: 1,
+                textAlign: "center",
+              }}
+            >
+              Events
+            </Text>
             {eventsData.length > 0 ? (
               eventsData.map((item, index) => (
                 <TouchableOpacity
@@ -224,7 +212,7 @@ const home = () => {
                       height: 18,
                     },
                     shadowOpacity: 0.25,
-                    shadowRadius: 16,
+                    shadowRadius: 14,
                     elevation: 10,
                   }}
                 >
@@ -281,25 +269,35 @@ const home = () => {
                 </TouchableOpacity>
               ))
             ) : (
-              <View style={{
-                width: width > 370 ? "30%" : "auto",
-                height: width > 370 ? 280 : "auto",
-                alignItems: "center",
-                justifyContent: "center", 
-              }}>
+              <View
+                style={{
+                  width: width > 370 ? "30%" : "auto",
+                  height: width > 370 ? 280 : "auto",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <Text style={styles.noEventsText}>No Events Found</Text>
               </View>
             )}
-          </View>
-        </View>
+          </>
+          {/* )} */}
+        </ScrollView>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
 export default home;
 
 const styles = StyleSheet.create({
+  homeContainer: {
+    // paddingVertical: 10,
+    backgroundColor: "#ffffff",
+    // width: width,
+    flex: 1,
+    height: "100%",
+  },
   overlay: {
     position: "absolute",
     top: 0,
@@ -332,7 +330,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 20,
   },
-  noEventsText:{
+  noEventsText: {
     fontSize: 18,
     fontWeight: "700",
   },
@@ -374,6 +372,7 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
